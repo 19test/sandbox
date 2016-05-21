@@ -28,8 +28,8 @@ im2 = imread('images/ogrenci_bw.png');
 
 	
 % VLFEAT sift point determination
-[f1, d1] = vl_sift(single(im1), 'PeakThresh', 0, 'edgethresh', 20);
-[f2, d2] = vl_sift(single(im2), 'PeakThresh', 0, 'edgethresh', 20);
+[f1, d1] = vl_sift(single(im1), 'PeakThresh', 0, 'edgethresh', 150);
+[f2, d2] = vl_sift(single(im2), 'PeakThresh', 0, 'edgethresh', 150);
 
 % Match the descriptor vectors via exhaustive nearest neighbor search
 threshold = 1.5;
