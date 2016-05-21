@@ -1,3 +1,8 @@
+1) http://www.vlfeat.org/install-matlab.html kur
+
+- http://www.vlfeat.org/download/vlfeat-0.9.20.tar.gz indir - aç ve make
+
+## Original Doc
 so.m
 
 Small matlab demo, so.m, to explore an answer to this stackoverflow question:
