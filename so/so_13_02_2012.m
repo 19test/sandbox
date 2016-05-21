@@ -18,6 +18,8 @@
 function so_13_02_2012;
 
 close all;
+clear all;
+clc;
 
 % Read in images
 im1 = imread('images/ruaa_1.png');
@@ -116,3 +118,94 @@ figure;imagesc(im1-im2);title('original difference');
 figure;imagesc(im1-transIm);title('difference after registration');colorbar;
 
 
+% ----------------------------------------------------------------------------
+% Shows the tho images side by side with lines between matching feature points
+%
+%
+function m_plotMatchLines(im1, im2, f1, f2, match)
+	
+	%	Make composite image
+	im3 = m_appendImages(im1, im2);
+
+	%	Show a figure with lines joining the matching features f1 and f2 as detemined by the indices
+	% 	in the 2xn array match.
+	%
+	figure('Position', [100 100 size(im3, 2) size(im3, 1)]);
+	colormap('gray');
+	imshow(im3, []);
+	hold on;
+	cols1 = size(im1, 2);
+	for i = 1: size(match, 2)
+	    line([f1(1, match(1, i)) f2(1, match(2, i))+cols1], ...
+	         [f1(2, match(1, i)) f2(2, match(2, i))], 'color', [0 0 1]);
+		plot(f1(1, match(1, i)), f1(2, match(1, i)), 'g+'); hold on;
+		plot(f2(1, match(2, i))+cols1, f2(2, match(2, i)), 'r+');
+
+	end
+	hold off;
+% ----------------------------------------------------------------------------
+%
+%
+function im = m_appendImages(image1, image2)
+
+	% Select the image with the fewest rows and fill in enough empty rows
+	% to make it the same height as the other image.
+	rows1 = size(image1, 1);
+	rows2 = size(image2, 1);
+
+	if (rows1 < rows2)
+	     image1(rows2, 1) = 0;
+	else
+	     image2(rows1, 1) = 0;
+	end
+
+	% Now append both images side-by-side.
+	im = [image1 image2];
+
+%------------------------------------------------------------------------------
+% Determines scale and translation between point sets x and x', ie x = Ax
+%
+%
+function [scale theta] = f_estimate_scaling_rotation(reference_points, observed_points)
+
+	% Get sizes and verify input sanity
+	[Npts   two] = size(reference_points);  assert(two == 2);
+	[NObpts two] = size(observed_points );  assert(two == 2);
+
+	assert(Npts == NObpts);
+
+	if (numel(find(reference_points == observed_points)) == Npts*2)
+	    scale = 1;
+	    theta = 0;
+	    return;
+	end
+
+	M = zeros(2*Npts, 2);
+	y = zeros(2*Npts, 1);
+	for i=1:Npts
+
+		% Two equations per pair of points
+		M(2*i-1, 1) = reference_points(i, 2);
+		M(2*i-1, 2) = reference_points(i, 1);
+		y(2*i-1)    =  observed_points(i, 2);
+		
+		M(2*i,   1) =  reference_points(i, 1);
+		M(2*i,   2) = -reference_points(i, 2);
+		y(2*i)      =   observed_points(i, 1);
+
+	end
+
+
+	% params(1) = scale * cos(theta); params(2) = scale * sin(theta); 
+	params = inv(M'*M)*M'*y;
+
+	% Verify 
+	[two one] = size(params);
+	assert(two == 2); assert(one == 1);
+
+	% Extract scaling using (cos^2 t + sin^2 t == 1)
+	scale = 1/sqrt(params(1)^2 + params(2)^2);
+
+	% See wikipedia
+	tan_theta = params(2) / params(1);
+	theta = atan(tan_theta);
