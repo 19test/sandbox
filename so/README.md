@@ -1,3 +1,22 @@
+1) http://www.vlfeat.org/install-matlab.html kur
+
+- http://www.vlfeat.org/download/vlfeat-0.9.20.tar.gz indir - aç ve make
+- http://www.vlfeat.org/install-matlab.html
+
+```matlab
+>> run('VLFEATROOT/toolbox/vl_setup')
+>> vl_version verbose
+VLFeat version 0.9.20
+    Static config: X64, little_endian, GNU C 40804 LP64, POSIX_threads, SSE2, OpenMP
+    8 CPU(s): GenuineIntel MMX SSE SSE2 SSE3 SSE41 SSE42 AVX
+    OpenMP: max threads: 8 (library: 8)
+    Debug: no
+    SIMD enabled: yes
+```
+
+2) https://github.com/brada/caltag
+
+## Original Doc
 so.m
 
 Small matlab demo, so.m, to explore an answer to this stackoverflow question:
